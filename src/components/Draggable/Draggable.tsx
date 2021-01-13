@@ -59,11 +59,44 @@ const Draggable: FC = () => {
   const drag = (event: React.MouseEvent): void => {
     const { clientX, clientY } = event;
 
+    if (!boxRef.current) {
+      return;
+    }
+
     if (active) {
+      const {
+        top,
+        right,
+        bottom,
+        left,
+      } = boxRef.current.getBoundingClientRect();
       event.preventDefault();
 
+      const windowHeight =
+        window.innerHeight || document.documentElement.clientHeight;
+      const windowWidth =
+        window.innerWidth || document.documentElement.clientWidth;
+
+      const boxHeight = boxRef.current.offsetHeight;
+      const boxWidth = boxRef.current.offsetWidth;
+
       setCurrentX(clientX - initialX);
-      setCurrentY(clientY - initialY);
+
+      if (left <= 0) {
+        setCurrentX(-windowWidth / 2 + boxWidth / 2);
+      } else if (right >= windowWidth) {
+        setCurrentX(windowWidth / 2 - boxWidth / 2);
+      } else {
+        setCurrentX(clientX - initialX);
+      }
+
+      if (top <= 0) {
+        setCurrentY(-windowHeight / 2 + boxHeight / 2);
+      } else if (bottom >= windowHeight) {
+        setCurrentY(windowHeight / 2 - boxHeight / 2);
+      } else {
+        setCurrentY(clientY - initialY);
+      }
 
       setTranslate(currentX, currentY, boxRef.current);
     }
