@@ -48,7 +48,7 @@ const Draggable: FC = () => {
       setXOffset(currentX);
       setYOffset(currentY);
 
-      setTranslate(currentX, currentY, draggableRef.current as HTMLElement);
+      setTranslate(currentX, currentY, boxRef.current as HTMLElement);
     }
   };
 
