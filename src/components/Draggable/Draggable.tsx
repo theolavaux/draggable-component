@@ -5,7 +5,6 @@ import Box from '../Box/Box';
 
 const Draggable: FC = () => {
   // Refs
-  const draggableRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
 
   // Active state
@@ -87,7 +86,6 @@ const Draggable: FC = () => {
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
       onMouseMove={drag}
-      ref={draggableRef}
       role="presentation"
     >
       <Box ref={boxRef} />
