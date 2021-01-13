@@ -4,55 +4,78 @@ import './Draggable.scss';
 import Box from '../Box/Box';
 
 const Draggable: FC = () => {
+  // Refs
   const draggableRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
 
+  // Active state
   const [active, setActive] = useState(false);
+
+  // Initial values
   const [initialX, setInitialX] = useState(0);
   const [initialY, setInitialY] = useState(0);
+
+  // Current values
   const [currentX, setCurrentX] = useState(0);
   const [currentY, setCurrentY] = useState(0);
-  const [xOffset, setXOffset] = useState(0);
-  const [yOffset, setYOffset] = useState(0);
 
-  const setTranslate = (xPos: number, yPos: number, el: HTMLElement) => {
-    el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+  /**
+   * Use transform and translate3D to move the HTML element
+   *
+   * @param xPos Position x to translate
+   * @param yPos Position y to translate
+   * @param el Element to translate
+   */
+  const setTranslate = (
+    xPos: number,
+    yPos: number,
+    el: HTMLElement | null
+  ): void => {
+    if (el) {
+      el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+    }
   };
 
-  const dragStart = (e: React.TouchEvent | React.MouseEvent) => {
-    if (e.type === 'touchstart') {
-      setInitialX((e as React.TouchEvent).touches[0].clientX - xOffset);
-      setInitialY((e as React.TouchEvent).touches[0].clientY - yOffset);
-    } else {
-      setInitialX((e as React.MouseEvent).clientX - xOffset);
-      setInitialY((e as React.MouseEvent).clientY - yOffset);
-    }
+  /**
+   * onDragStart event handler
+   *
+   * @param event
+   */
+  const dragStart = (event: React.MouseEvent): void => {
+    const { clientX, clientY, target } = event;
 
-    if (e.target === boxRef.current) {
+    setInitialX(clientX - currentX);
+    setInitialY(clientY - currentY);
+
+    if (target === boxRef.current) {
       setActive(true);
     }
   };
 
-  const drag = (e: React.TouchEvent | React.MouseEvent) => {
+  /**
+   * onDrag event handler
+   *
+   * @param event
+   */
+  const drag = (event: React.MouseEvent): void => {
+    const { clientX, clientY } = event;
+
     if (active) {
-      e.preventDefault();
+      event.preventDefault();
 
-      if (e.type === 'touchmove') {
-        setCurrentX((e as React.TouchEvent).touches[0].clientX - initialX);
-        setCurrentY((e as React.TouchEvent).touches[0].clientY - initialY);
-      } else {
-        setCurrentX((e as React.MouseEvent).clientX - initialX);
-        setCurrentY((e as React.MouseEvent).clientY - initialY);
-      }
+      setCurrentX(clientX - initialX);
+      setCurrentY(clientY - initialY);
 
-      setXOffset(currentX);
-      setYOffset(currentY);
-
-      setTranslate(currentX, currentY, boxRef.current as HTMLElement);
+      setTranslate(currentX, currentY, boxRef.current);
     }
   };
 
-  const dragEnd = () => {
+  /**
+   * onDragEnd event handler
+   *
+   * @param event
+   */
+  const dragEnd = (): void => {
     setInitialX(currentX);
     setInitialY(currentY);
     setActive(false);
@@ -61,9 +84,6 @@ const Draggable: FC = () => {
   return (
     <div
       id="draggable"
-      onTouchStart={dragStart}
-      onTouchEnd={dragEnd}
-      onTouchMove={drag}
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
       onMouseMove={drag}
