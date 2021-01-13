@@ -57,13 +57,13 @@ const Draggable: FC = () => {
    * @param event
    */
   const drag = (event: React.MouseEvent): void => {
-    const { clientX, clientY } = event;
-
-    if (!boxRef.current) {
-      return;
-    }
-
     if (active) {
+      const { clientX, clientY } = event;
+
+      if (!boxRef.current) {
+        return;
+      }
+
       const {
         top,
         right,
@@ -115,6 +115,7 @@ const Draggable: FC = () => {
 
   return (
     <div
+      data-test="draggable"
       id="draggable"
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
